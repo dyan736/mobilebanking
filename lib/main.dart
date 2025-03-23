@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Internet Banking',
+      title: 'Mobile Banking',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: LoginPage(),
     );
