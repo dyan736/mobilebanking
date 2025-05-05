@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'main_menu_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
@@ -121,15 +122,59 @@ class LoginPage extends StatelessWidget {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                // Proses login dan navigasi ke Homepage
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MainMenuPage(),
-                                  ),
-                                );
+                                String username = _usernameController.text;
+                                String password = _passwordController.text;
+
+                                // Cek apakah username dan password sesuai
+                                if (username ==
+                                        'dian.satriani@student.undiksha.ac.id' &&
+                                    password == 'admin123') {
+                                  // Simpan username ke SharedPreferences
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  await prefs.setString('username', username);
+                                  await prefs.setString('password', password);
+                                  // Proses login dan navigasi ke Homepage
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => MainMenuPage(),
+                                    ),
+                                  );
+                                } else {
+                                  String errorMessage = '';
+                                  if (username !=
+                                      'dian.satriani@student.undiksha.ac.id') {
+                                    errorMessage = 'Username salah';
+                                  }
+                                  if (password != 'admin123') {
+                                    errorMessage =
+                                        errorMessage.isEmpty
+                                            ? 'Password salah'
+                                            : '$errorMessage dan password salah';
+                                  }
+
+                                  // Tampilkan pesan error
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text('Login Gagal'),
+                                        content: Text(errorMessage),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text('OK'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
                               }
                             },
                             style: ElevatedButton.styleFrom(
