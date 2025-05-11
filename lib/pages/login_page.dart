@@ -7,6 +7,24 @@ class LoginPage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  // Fungsi untuk menyimpan data login ke SharedPreferences
+  static Future<void> saveLoginData(String username, String password) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
+    await prefs.setString('password', password);
+    print("Username and Password saved.");
+  }
+
+  // Fungsi untuk mengambil data login dari SharedPreferences
+  void loadLoginData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? savedUsername = prefs.getString('username');
+    String? savedPassword = prefs.getString('password');
+
+    print("Loaded Username: $savedUsername");
+    print("Loaded Password: $savedPassword");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +75,7 @@ class LoginPage extends StatelessWidget {
                     key: _formKey,
                     child: Column(
                       children: [
-                        // Tulisan Login
+                        // Tulisan Username
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
@@ -68,10 +86,8 @@ class LoginPage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: 5,
-                        ), // Jarak antara tulisan dan kotak input
-                        // Input Username dengan hint text
+                        SizedBox(height: 5),
+                        // Input Username
                         TextFormField(
                           controller: _usernameController,
                           decoration: InputDecoration(
@@ -99,9 +115,7 @@ class LoginPage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: 5,
-                        ), // Jarak antara tulisan dan kotak input
+                        SizedBox(height: 5),
                         // Input Password
                         TextFormField(
                           controller: _passwordController,
@@ -131,13 +145,14 @@ class LoginPage extends StatelessWidget {
                                 if (username ==
                                         'dian.satriani@student.undiksha.ac.id' &&
                                     password == 'admin123') {
-                                  // Simpan username ke SharedPreferences
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                  await prefs.setString('username', username);
-                                  await prefs.setString('password', password);
-                                  // Proses login dan navigasi ke Homepage
-                                  Navigator.push(
+                                  // Simpan username dan password ke SharedPreferences
+                                  await LoginPage.saveLoginData(
+                                    username,
+                                    password,
+                                  );
+
+                                  // Proses login dan navigasi ke halaman utama
+                                  Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => MainMenuPage(),
@@ -185,7 +200,7 @@ class LoginPage extends StatelessWidget {
                                 142,
                               ),
                               padding: EdgeInsets.symmetric(vertical: 15),
-                              elevation: 5, // Shadow
+                              elevation: 5,
                               shadowColor: Colors.blue.withOpacity(0.5),
                             ),
                             child: Text(

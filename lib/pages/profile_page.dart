@@ -14,6 +14,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final String fullName = "Luh Putu Dian Satriani";
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -21,12 +23,36 @@ class _ProfilePageState extends State<ProfilePage> {
     _loadLoginData();
   }
 
+  // Memuat data dari SharedPreferences
   _loadLoginData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      email = prefs.getString('username')!;
-      password = prefs.getString('password')!;
+      email = prefs.getString('username') ?? ''; // Ambil email
+      password = prefs.getString('password') ?? ''; // Ambil password
     });
+    _emailController.text = email;
+    _passwordController.text = password;
+    print("Email: $email");
+    print("Password: $password");
+  }
+
+  // Menyimpan data yang sudah diperbarui ke SharedPreferences
+  _saveUpdatedData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      'username',
+      _emailController.text,
+    ); // Simpan email baru
+    await prefs.setString(
+      'password',
+      _passwordController.text,
+    ); // Simpan password baru
+    setState(() {
+      email = _emailController.text;
+      password = _passwordController.text;
+    });
+    print("Updated Email: $email");
+    print("Updated Password: $password");
   }
 
   @override
@@ -46,19 +72,28 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Profile Picture
+                  // Judul di tengah dengan warna putih
+                  Text(
+                    'Profile',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+
+                  // Profile Picture (dalam lingkaran putih)
                   Stack(
-                    alignment: Alignment.bottomRight,
+                    alignment: Alignment.center,
                     children: [
                       CircleAvatar(
                         radius: 50,
-                        backgroundColor: Colors.grey.shade300,
-                        backgroundImage: AssetImage('assets/profile.jpg'),
-                      ),
-                      CircleAvatar(
-                        radius: 14,
-                        backgroundColor: const Color.fromARGB(255, 0, 37, 150),
-                        child: Icon(Icons.add, size: 18, color: Colors.white),
+                        backgroundColor: Colors.white,
+                        child: CircleAvatar(
+                          radius: 45,
+                          backgroundImage: AssetImage('assets/profile.jpg'),
+                        ),
                       ),
                     ],
                   ),
@@ -87,8 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 5),
                   TextFormField(
-                    initialValue: email,
-                    enabled: false,
+                    controller: _emailController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       suffixIcon: Icon(Icons.email),
@@ -110,7 +144,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         padding: const EdgeInsets.all(12),
                         child: Text("📞"),
                       ),
-                      hintText: "1234 5678 9101",
+                      hintText: "083119259318",
                       border: OutlineInputBorder(),
                       suffixIcon: Icon(Icons.phone),
                     ),
@@ -126,7 +160,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   TextFormField(
                     controller: _addressController,
                     decoration: InputDecoration(
-                      hintText: "",
+                      hintText: "Jln Veteran",
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -139,7 +173,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 5),
                   TextFormField(
-                    initialValue: password,
+                    controller: _passwordController,
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
@@ -159,7 +193,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 25),
 
-                  // Buttons
+                  // Button Kembali (berwarna putih)
                   Row(
                     children: [
                       Expanded(
@@ -167,27 +201,24 @@ class _ProfilePageState extends State<ProfilePage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color.fromARGB(
                               255,
-                              0,
-                              55,
-                              150,
+                              30,
+                              63,
+                              232,
                             ),
                             padding: EdgeInsets.symmetric(vertical: 16),
                           ),
                           onPressed: () {
-                            // Tambahkan aksi update profile di sini
+                            Navigator.pop(context);
                           },
-                          child: Text("Update Profile"),
+                          child: Text(
+                            "Kembali",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 10),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("Cancel"),
-                  ),
                 ],
               ),
             ),

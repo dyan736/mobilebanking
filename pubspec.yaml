@@ -10,6 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
   shared_preferences: ^2.0.15
+  provider: ^6.1.1
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -22,3 +24,4 @@ flutter:
     - assets/logo_undiksha.png
     - assets/logo-undiksha.png
     - assets/profile.jpg
+    - assets/pot_coin.png
